@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
 
-    # "crispy_bootstrap5",
+    "crispy_bootstrap5",
     "crispy_forms",   
     'widget_tweaks',
     
@@ -82,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'otakustie.wsgi.application'
+WSGI_APPLICATION = 'otakustie.wsgi.application'
 
 
 # Database
