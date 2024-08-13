@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
 ]
+INSTALLED_APPS += ["django_s3_sqlite"]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -89,10 +90,13 @@ WSGI_APPLICATION = 'otakustie.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+  "default": {
+        "ENGINE": "django_s3_sqlite",
+        "NAME": "sqlite.db",
+        "BUCKET": "your-db-bucket",
+	"AWS_S3_ACCESS_KEY": "AKIA0000000000000000",  # optional, to lock down your S3 bucket to an IAM user
+	"AWS_S3_ACCESS_SECRET": "9tIZfakefakefakefakeT9Q6LD6jB5UyofakeISN",  # optional, to lock down your S3 bucket to an IAM user
+  }
 }
 
 
