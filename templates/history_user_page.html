@@ -1,0 +1,96 @@
+{% extends 'user_page.html' %}
+
+{% block user_content %}
+
+<style>
+    .story-follow-header{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-left: 4px red solid;
+    align-items: center;
+    margin-bottom: 10px;
+}   
+
+.history-description {
+    padding: 10px;
+    background-color: rgb(221, 221, 221);
+    border: 1px gray solid;
+    border-radius: 10px;
+}
+</style>
+
+<div class = "box-change-infomation">
+    <div class="story-follow-header">
+        <p>Lịch sử xem</p>
+    </div>
+    <div class="history-description">
+        Lịch sử xem của bạn sẽ được lưu ở đây
+    </div>
+
+    <div class="story-now-follow">
+        <div class="story-now-follow-header">
+            <p>tên truyện</p>
+            <p>xem gần nhất</p>
+            <p>chapter mới</p>
+        </div>
+        {% for manga in page.object_list.all %}
+        <div class="story-now-follow-items">
+            <div class = "manga-infomation-of-userpage">
+                <div class="manga-image-in-userpage">
+                    <a href="{% url 'room' manga.manga.name %}"><img src="{{manga.manga.image}}" alt="" style = "border: 2px rgb(138, 138, 138) solid; border-radius: 10px;"></a>
+                </div>
+                <div class="items-name-and-unfollow">
+                <a href =  "{% url 'room' manga.manga.name %}">{{manga.manga.name}}</a>
+                
+            </div>
+            </div>
+            <div class =  "chapter-is-reading">
+                <a href = "{% url 'manga-content' manga.manga.name manga.chapter.id %}">
+                    {% with manga.chapter.chaptername|split:manga.manga.name as chaps %}
+                    {% for chap in chaps|slice:'-1:' %}
+                        {{chap|truncatechars:'15'}}
+                    {% endfor %}
+                    {% endwith %}
+                </a>
+                <p>25/11/22</p>
+            </div>
+            <div class="latest-chapter">
+                <a href="{% url 'manga-content' manga.manga.name manga.manga.chapters.first.id %}">
+                    {% with manga.manga.chapters.first.chaptername|split:manga.manga.name as chaps %}
+                    {% for chap in chaps|slice:'-1:' %}
+                        {{chap|truncatechars:'15'}}
+                    {% endfor %}
+                    {% endwith %}
+                </a>
+                <p>12 Giờ trước</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+     <div class = "d-flex justify-content-center">
+        <nav aria-label="Page navigation example">      
+            <ul class="pagination">
+                {% if page.has_previous %}
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page=1"><i class = "fas fa-angle-double-left"></i></a></li>
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page.previous_page_number}}"><i class ="fas fa-angle-left"></i></a></li>
+                {% endif %}
+
+                {% for page_num in page.paginator.page_range %}
+                    {% if page.number == page_num %}
+                    <li class="page-item"><a class="page-link active" href="{% url 'following-page' %}?page={{page_num}}">{{page_num}}</a></li>
+                    {% elif page_num > page.number|add:'-3' and page_num < page.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page_num}}">{{page_num}}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page.has_next %}
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page.next_page_number}}"><i class = "fas fa-angle-right"></i></a></li>
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page.paginator.num_pages}}"><i class = "fas fa-angle-double-right"></i></a></li>
+                
+                {% endif %}
+            </ul>
+        </nav>  
+    </div>
+</div>
+
+{% endblock %}

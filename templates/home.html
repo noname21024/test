@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <style>
+        .name_of_manga a:hover {
+            color: rgb(0, 95, 173);
+        }
+    </style>
+
+    <div class = 'row'>
+        {% if messages %}
+        <div class="notification-render">
+            {% for message in messages %}
+                <div class = "alert alert-{{message.tags}}">
+                    {{message}}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="manga-container">
+        <p class = "hot-manga-title">
+            <i class='fas fa-fire-alt' style='font-size:24px'></i> Như như con điên
+        </p>
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+            {% for manga_top in top_mangas|slice:":10" %}
+            <div class="swiper-slide">
+                <a href="{% url 'room' manga_top.name %}">
+                    <img src="{{manga_top.image}}" alt="">
+                </a>
+                <a href="{% url 'manga-content'  manga_top.name manga_top.chapters.first.id %}" class = "position-absolute bottom-0 start-50 translate-middle-x btn btn-primary" role="button" style = "font-size: 14px; margin-bottom: 10px" >
+                    {% with manga_top.chapters.first.chaptername|split:manga_top.name as chaps %}
+                    {% for chap in chaps|slice:'-1:' %}
+                        {{chap|truncatechars:'15'}}
+                    {% endfor %}
+                    {% endwith %}
+                </a>
+            </div>
+            {% endfor %}
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <!-- <div class="swiper-pagination"></div> -->
+        </div>
+        <p class = "newupload-manga-title">
+            <i class="fa fa-book"></i> Truyện mới cập nhật
+        </p>
+        <div class="manga-cards">
+            {% for manga in page.object_list %}
+            <div class="manga-card">
+                <a href="{% url 'room' manga.name %}">
+                    <img src ="{{manga.image}}" alt="">
+                </a>
+                <h5 class = "name_of_manga" style="margin-top: 15px;
+                display: flex;
+                justify-content: start;
+                font-size: 1rem;">
+                    <a href="{% url 'room' manga.name %}">
+                        {{manga.name|truncatechars:40}}
+                    </a>
+                </h5>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    {% for chapter in manga.chapters.all|slice:':3' %}
+                    <div>
+                        <a href="{% url 'manga-content' manga.name chapter.id %}">
+                            {% with chapter.chaptername|split:manga.name as chaps %}
+                            {% for chap in chaps|slice:'-1:' %}
+                                {{chap|truncatechars:'30'}}
+                            {% endfor %}
+                            {% endwith %}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>                    
+            </div>    
+            {% endfor %}
+        </div>
+        <div class = "d-flex justify-content-center">
+            <nav aria-label="Page navigation example">      
+                <ul class="pagination">
+                    {% if page.has_previous %}
+                    <li class="page-item"><a class="page-link" href="{% url 'home' %}?page=1"><i class = "fas fa-angle-double-left"></i></a></li>
+                    <li class="page-item"><a class="page-link" href="{% url 'home' %}?page={{page.previous_page_number}}"><i class ="fas fa-angle-left"></i></a></li>
+                    {% endif %}
+
+                    {% for page_num in page.paginator.page_range %}
+                        {% if page.number == page_num %}
+                        <li class="page-item"><a class="page-link active" href="{% url 'home' %}?page={{page_num}}">{{page_num}}</a></li>
+                        {% elif page_num > page.number|add:'-3' and page_num < page.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="{% url 'home' %}?page={{page_num}}">{{page_num}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page.has_next %}
+                    <li class="page-item"><a class="page-link" href="{% url 'home' %}?page={{page.next_page_number}}"><i class = "fas fa-angle-right"></i></a></li>
+                    <li class="page-item"><a class="page-link" href="{% url 'home' %}?page={{page.paginator.num_pages}}"><i class = "fas fa-angle-double-right"></i></a></li>
+                    
+                    {% endif %}
+                </ul>
+            </nav>  
+        </div>
+    </div>
+
+{% endblock %}

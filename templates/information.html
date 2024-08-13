@@ -1,0 +1,74 @@
+{% extends 'user_page.html' %}
+
+{% block user_content %}
+<div class="infomation-box-items">
+    <div class="account-info">
+        <div class="account-info-header">
+            <p>Thông tin chung</p> <a href="{% url 'change-infor' %}">Chỉnh sửa <i class="fas fa-angle-right"></i></a>
+        </div>
+        <div class="account-info-items-box">
+            {% if request.user.first_name %}
+            <div class="name-of-user info">
+                <p>Tên người dùng</p> <p>{{request.user.first_name}}</p>
+            </div>
+            {% else %}
+            <div class="name-of-user info">
+                <p>Tên đăng nhập</p> <p>{{request.user.username}}</p>
+            </div>
+            {% endif %}
+            <div class="email-of-user info">
+                <p>Email</p> <p>{{user.email}}</p>
+            </div>
+            <div class="created-time-user info">
+                <p>Tạo vào lúc</p> <p class = "time">[{{request.user.date_joined.date|date:'d/m/Y'}}]</p>
+            </div>
+        </div>
+    </div>
+    {% if request.user.follows.first %}
+    <div class="story-follow">
+        <div class="story-follow-header">
+            <p>Truyện đang theo dõi</p>
+            <a href="{% url 'following-page' %}">Xem tất cả <i class="fas fa-angle-right"></i></a>
+        </div>
+        <div class="story-now-follow">
+            <div class="story-now-follow-header">
+                <p>tên truyện</p>
+                <p>xem gần nhất</p>
+                <p>chapter mới</p>
+            </div>
+            {% for manga in user.follows.all %}
+            <div class="story-now-follow-items">
+                <div class = "manga-infomation-of-userpage">
+                    <div class="manga-image-in-userpage">
+                        <a href="{% url 'room' manga.manga.name %}"><img src="{{manga.manga.image}}" alt="" style = "border: 2px rgb(138, 138, 138) solid; border-radius: 10px;"></a>
+                    </div>
+                    <div class="items-name-and-unfollow">
+                    <a href =  "{% url 'room' manga.manga.name %}">{{manga.manga.name}}</a>
+                    <form action="" method = 'POST'>
+                        {% csrf_token %}
+                        <input type="hidden" name = "name-manga" value = "{{manga.manga.name}}">
+                        <button type = "submit" class = 'unfollow-manga' name = 'unfollow' value = {{manga.manga.name}}><i class="fa-solid fa-xmark"></i> Unfollow</button>
+                    </form>
+                </div>
+                </div>
+                <div class =  "chapter-is-reading">
+                    <a href = "">chapter 8</a>
+                    <p>25/11/22</p>
+                </div>
+                <div class="latest-chapter">
+                    <a href="">chapter 113</a>
+                    <p>12 Giờ trước</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+
+    <div style = "margin-bottom: 17rem;">
+
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}

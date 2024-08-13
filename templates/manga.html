@@ -1,0 +1,166 @@
+{% extends 'otakusite/base.html' %}
+{% block content %}
+<div class="manga-container">
+        <div class="manga-container-header">
+            <div class="nav-of-manga-page">
+                <ul>
+                    <li>
+                        <a href="{% url 'home' %}">home</a> / <a href="{% url 'manga-list' %}">list manga</a> / <p>name of manga</p>    
+                    </li>
+                </ul>
+            </div>
+            <div class="manga-chapter-infomation">
+                <p class = "name-of-manga-now-read"><a href="">{{manga.title}}</a></p>
+                <p class = "chapter-of-manga-now-read">
+                    chapter {{chapternum}}
+                </p>
+                <p class = "update-time">
+                    [Cập nhật lúc: {{current_chapter.created|date:'d/m/Y'}}]
+                </p>
+            </div>
+        
+            <div class="instruct">
+                <p><i class="fa-solid fa-circle-info"></i> Sử dụng mũi tên trái (←) hoặc phải (→) để chuyển chapter</p>
+            </div>
+        
+       
+        </div>
+        <div class="navbar-in-chapter">
+            <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i></a>
+            <a href="{% url 'manga-room' manga.title %}"><i class="fa-solid fa-list"></i></a>
+            {% if chapternum != manga.chapters.last.chapter %}
+            <form action="" method = 'POST'>
+                {% csrf_token %}
+                <input type="hidden" name = 'value' value = 'next_or_previous'>
+                <button type = 'submit' name = 'change_page' value = 'previous'  class = "page-change-button"><i class="fa-solid fa-angle-left"></i></button>
+            </form>
+            {% else %}
+            <button class = "page-change-button none_page"><i class="fa-solid fa-angle-left"></i></button>
+            {% endif %}
+            <div class = "dropdown manga-chapter-dropdown" data-dropdown>
+                <button class="link manga-chapter-link" data-dropdown-button>
+                    <div>
+                        Chapter {{chapternum}}
+                    </div>
+                    <div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </button>
+                <div class="chapter-content">
+                    <ul class = 'p-0'>
+                        {% for chapter in manga.chapters.all %}
+                        <a href="{% url 'manga' manga.title chapter.chapter %}"><li>Chapter {{chapter.chapter}}</li></a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% if chapternum != manga.chapters.first.chapter %}
+            <form action="" method = 'POST'>
+                {% csrf_token %}
+                <input type="hidden" name = 'value' value = 'next_or_previous'>
+                <button type = 'submit' name = 'change_page' value = 'next'  class = "page-change-button"><i class="fa-solid fa-angle-right"></i></button>
+            </form>
+            {% else %}
+            <button class = "page-change-button none_page"><i class="fa-solid fa-angle-right"></i></button>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            <div class ="follow-button">
+                <form action="" method = 'POST'>
+                    {% csrf_token %}
+                    <input type="hidden" name = 'value' value="follow-button">
+                    {% if manga in user.mangas.all %}
+                    <button class="room-btn unfollow" name = 'follow' value = 'unfollow' >
+                        <i class="fa-solid fa-xmark fa-lg"></i></i>Bỏ theo dõi
+                    </button>
+                    {% else %}
+                    <button class="room-btn follow" name = 'follow' value = 'follow'>
+                        <i class="fa-solid fa-bookmark"></i>Theo dõi
+                    </button>
+                    {% endif %}
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        <div class="content">
+            {% for image in images %}
+                <img src="{{image.images.url}}" alt="">
+            {% endfor %}
+        </div>
+        <div class="navbar-in-chapter-bottom">
+            <div class="nav-button">
+                <form action="" method = 'POST'>
+                    {% csrf_token %}
+                    <input type="hidden" name = 'value' value = 'next_or_previous'>
+                    <button type = 'submit' name = 'change_page' value = 'previous' class = "navbar-chapter-btn"><i class="fa-solid fa-angle-left"></i>Chapter trước</button>
+                    <button type = 'submit' name = 'change_page' value = 'next' class = "navbar-chapter-btn">Chapter sau<i class="fa-solid fa-angle-right"></i></button>
+                </form>
+            </div>
+            <div class="nav-of-manga-page">
+                <ul>
+                    <li>
+                        <a href="{% url 'home' %}">home</a> / <a href="">list manga</a> / <p>{{manga.title}}</p> / <p>Chapter {{chapternum}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="comment-of-user-in-manga-room">
+            <div class="comment-header">
+                <p><i class="fa-solid fa-comments"></i> Bình luận <span>({{count}})</span></p>
+            </div>
+            {% if request.user.is_authenticated %}
+            <div class="comment-box">
+                <form action="" class = "comment-field" method = 'POST'>
+                    {% csrf_token %}
+                    <input type="hidden" name = 'value' value="comment">
+                    <textarea placeholder="Mời bạn thảo luận, vui lòng không spam, share link kiếm tiền, thiếu lành mạnh,... để tránh bị khóa tài khoản" name = 'body'></textarea>
+                    <button type = 'submit'>
+                        submit
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div  class = "login-requied">
+                Hãy <a href="{% url 'login' %}">đăng nhập</a> để có thể bình luận
+            </div>
+            {% endif %}
+            <div class="comment-user-container-content">
+                {% for message in messages %}
+                <div class="comment-user-image">
+                    <img src="{{message.user.profile.image.url}}" alt="">
+                </div>
+                <div class="comment-items-container">
+                    <div class="infomation-comment-user">
+                        <div class="comment-user-header">
+                            {%  if message.user.first_name %}
+                            <p class = "comment-user-name">{{message.user.first_name}}</p><p class= "comment-of-chapter">chapter {{chapternum}}</p>
+                            {% else %}
+                            <p class = "comment-user-name">{{message.user.username}}</p><p class= "comment-of-chapter">chapter {{chapternum}}</p>
+                            {% endif %}
+                        </div>
+                        <div class="comment-user-content">
+                            {{message.body}}
+                        </div>
+                    </div>
+                    <div class="comment-items">
+                        <div class="reply-item">
+                            <i class="fa-solid fa-comment"></i> Trả lời
+                        </div>                                
+                        <div class="like-comment">
+                            <i class="fa-solid fa-thumbs-up"></i>
+                        </div>
+                        <div class="dislike-comment">
+                            <i class="fa-solid fa-thumbs-down"></i>
+                        </div>
+                        <div class="violate">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </div>
+                        <p class = "time-comment">
+                            <i class="fa-regular fa-clock"></i> {{message.created|timesince}} ago
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

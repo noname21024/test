@@ -1,0 +1,82 @@
+<style>
+  .dropdown-user {
+    width: 220px;
+    font-size: 15px;
+  }
+
+  .manga-results {
+    position: absolute;
+    top: 3.5rem;
+    background-color: white;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.164);
+    border-radius: 10px;
+    width: 100%;
+    max-height: 50rem;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.164);
+    z-index: 9999;
+    overflow: auto;
+  }
+
+</style>
+<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">OtakuSite</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/"><i class="fas fa-home"></i> Home</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Thể loại
+            </a>
+            <ul class="dropdown-menu dropdown-category">
+                <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'list' None %}">Tất cả</a></li>
+
+                {% for tag in tags|dictsort:'name' %}
+                <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'list' tag.id %}">{{tag.name|truncatechars:15}}</a></li>
+                {% endfor %}
+            </ul>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle"></i> {{request.user.username}}
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'user-page' %}"><i class="fas fa-id-card"></i> Thông tin</a></li>
+              <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'following-page' %}"><i class="fas fa-bookmark"></i> Truyện đang theo dõi</a></li>
+              <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'history_view' %}"><i class="fas fa-glasses"></i> Lịch sử xem</a></li>
+              <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle"></i> Thành viên
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
+              <li><a class="dropdown-item text-capitalize dropdown-li-item" href="{% url 'register' %}"><i class="fas fa-registered"></i> Đăng ký</a></li>
+            </ul>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'history_view' %}"><i class="fas fa-history"></i> Lịch sử</a>
+          </li>
+        </ul>
+        <form class="d-flex" role="search" action = "{% url 'manga-search-result' %}" method = 'GET' style="position: relative;">
+          {% csrf_token %}
+          <input class="form-control me-2" type="search" placeholder="Tìm kiếm ..." aria-label="Search" name = "q" hx-post = "{% url 'search-manga' %}" hx-trigger = 'keyup change delay:500ms' hx-target = '#results'>
+          <div id = 'results' class = 'manga-results'>    
+          </div>  
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>

@@ -1,0 +1,44 @@
+<style>
+    .manga-render-card .link-manga-card {
+        display: grid;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        width: 100%;
+        grid-template-columns: 1fr 5fr;
+        gap: 10px;
+    }   
+
+    .manga-render-card .link-manga-card img {
+        width: 80px;
+        height: 100px;
+        object-fit: cover;
+    }   
+</style>
+
+{% if results  %}
+    {% for manga in results %}
+    <div class="manga-render-card">
+        <a class = "link-manga-card" href="{% url 'room' manga.name %}">
+            <div class="manga-render">
+                <div class="manga-render-image">
+                        <img src="{{manga.image}}" alt="">
+                </div>
+            </div>
+            <div class="manga-render-infomation">
+                <div class = 'manga-render-title'>{{manga.name|truncatechars:'25'}}
+                    
+                </div>
+                <div class = 'manga-render-chapter-new'>
+                    {% with manga.chapters.first.chaptername|split:manga.name as chaps %}
+                    {% for chap in chaps|slice:'-1:' %}
+                        {{chap|truncatechars:'15'}}
+                    {% endfor %}
+                    {% endwith %}
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

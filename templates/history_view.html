@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .following-page-title {
+        font-size: 1.4rem;
+        color: black;
+        font-weight: 500;
+        border-bottom: 2px black solid;
+        padding: 10px 0;
+    }
+</style>
+
+<div class="manga-container">
+    <p class = "following-page-title">Lịch sử xem</p>
+   
+
+    <div class="manga-cards">
+        {% for manga in page.object_list %}
+        <div class="manga-card">
+            <a href="{% url 'room' manga.manga.name %}">
+                <img src ="{{manga.manga.image}}" alt="">
+            </a>
+            <h5 style="margin-top: 15px;
+            display: flex;
+            justify-content: start;">
+                <a href="{% url 'room' manga.manga.name %}">
+                    {{manga.manga.name|truncatechars:30}}
+                </a>
+            </h5>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                {% for chapter in manga.manga.chapters.all|slice:':3' %}
+                <div>
+                    <a href="{% url 'manga-content' manga.manga.name chapter.id %}">
+                        {% with chapter.chaptername|split:manga.manga.name as chaps %}
+                        {% for chap in chaps|slice:'-1:' %}
+                            {{chap|truncatechars:'30'}}
+                        {% endfor %}
+                        {% endwith %}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>                
+        </div>    
+        {% endfor %}
+    </div>
+    <div class = "d-flex justify-content-center">
+        <nav aria-label="Page navigation example">      
+            <ul class="pagination">
+                {% if page.has_previous %}
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page=1"><i class = "fas fa-angle-double-left"></i></a></li>
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page.previous_page_number}}"><i class ="fas fa-angle-left"></i></a></li>
+                {% endif %}
+
+                {% for page_num in page.paginator.page_range %}
+                    {% if page.number == page_num %}
+                    <li class="page-item"><a class="page-link active" href="{% url 'following-page' %}?page={{page_num}}">{{page_num}}</a></li>
+                    {% elif page_num > page.number|add:'-3' and page_num < page.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page_num}}">{{page_num}}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page.has_next %}
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page.next_page_number}}"><i class = "fas fa-angle-right"></i></a></li>
+                <li class="page-item"><a class="page-link" href="{% url 'following-page' %}?page={{page.paginator.num_pages}}"><i class = "fas fa-angle-double-right"></i></a></li>
+                
+                {% endif %}
+            </ul>
+        </nav>  
+    </div>
+</div>
+
+
+{% endblock %}

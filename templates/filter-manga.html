@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .list-home {
+        margin: 1rem 0;
+        border-bottom: 2px black solid;
+        padding: 10px;
+    }
+    .list-home i {
+        margin: 0 3px;
+    }
+
+    .tag-description p{
+        padding: 20px  25px;
+        background-color: rgb(216, 238, 245);
+        color: black;
+        border: 1px black solid;
+        border-radius: 20px;
+    }
+
+    .filter-checkbox-container{
+        margin: 10px 0;
+    }
+
+    .filter-checkbox{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .filter-container {
+        background-color: rgb(209, 209, 209);
+        padding: 10px 15px;
+        border-radius: 10px;
+        display: none;
+    }
+
+    .manga-button-filter {
+        background-color: rgb(255, 255, 0);
+        font-weight: 500;
+        border: 1px rgb(196, 196, 0) solid;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+</style>
+
+<div class="manga-container">
+
+    <button onclick="myFunction()" class = "manga-button-filter">
+        <i class="fas fa-filter"></i>
+    </button>
+
+    <div class = "filter-checkbox-container">
+        
+        <form action="" method = 'POST' action = "{% url 'filter-manga' %}" class = "filter-container" id = 'myDIV'>
+            {% csrf_token %}
+            <div class = "filter-checkbox">
+                {% for tag in tags %}
+
+                <div class="form-check">
+                    <label class="form-check-label" for="{{tag}}">
+                        {{tag}}
+                    </label>
+                    <input class="form-check-input" type="checkbox"  id="{{tag}}" value = '{{tag.name}}' name = 'filter-tag'>
+                  </div>
+                    {% endfor %}
+            </div>
+
+            <button type = "submit"  class="btn btn-dark">
+                Search
+            </button>
+        </form>
+    </div>
+
+
+    <div class="manga-cards">
+        {% for manga in page.object_list %}
+        <div class="manga-card">
+            <a href="{% url 'room' manga.name %}">
+                <img src ="{{manga.image}}" alt="">
+            </a>
+            <h5 style="margin-top: 15px;
+            display: flex;
+            justify-content: center;">
+                <a href="{% url 'room' manga.name %}">
+                    {{manga.name|truncatechars:30}}
+                </a>
+            </h5>
+
+        </div>    
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+{% endblock %}

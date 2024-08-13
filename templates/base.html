@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css?v=7857324">
+    <meta name="google-site-verification" content="qPuSkXmSLnFfsQeg2t2aIU9RIh2fvRiEYgqu9jkC1uE" />
+    <meta property="og:title" content="Đọc Truyện Tranh Online - Website chính thức - NetTruyen" />
+    <meta property="og:site_name" content="NetTruyen" />
+    <meta property="og:url" content="https://www.nettruyenvv.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Web đọc truyện tranh online lớn nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận với hơn 💚10 triệu thành viên tại NetTruyen" />
+    <meta itemprop="name" content="Đọc Truyện Tranh Online - Website chính thức - NetTruyen" /><meta itemprop="description" content="Web đọc truyện tranh online lớn nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận với hơn 💚10 triệu thành viên tại NetTruyen" />
+    <link rel="icon" href="{% static 'images/Untitled.png' %}">
+    {% if title %}
+    <title>{{title}}
+    </title> 
+    {% else %}
+    <title>Otakusite</title>
+    {% endif %}
+    {% if descrition %}
+    <meta name="description" content="{{description}}" />
+    {% else %}
+    <meta name="description" content="Xem manga online xem trên điện thoại di động và máy tính nhanh nhất." />
+    {% endif %}
+    <meta name="keywords" content="manga, otakusite, manga hay, xem manga, truyện tranh, truyện mới nhất, my otakusite, otakusite trang web" />
+    <meta name="title" content="Otakusite" />
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <meta property="og:title" content="Manga Online - Otakusite" />
+    <meta name="title" content="Manga online - Otakusite" />
+    <meta name="robots" content="index, follow" />
+    <style>
+
+        html {
+        scroll-behavior: smooth;
+        }
+        a {
+            text-decoration: none;
+            color: black
+        }
+        .container-img {
+            margin-bottom: 3rem;
+        }
+
+        .container-img img {
+            width: 100%;
+            
+        }
+
+        .img-content  {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;            
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: rgb(228, 228, 228);
+            position: relative;
+            padding-bottom: 20rem;
+        }
+
+        .container {
+            max-width: 70rem;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
+            background-color: white;
+            padding: 10px
+        }
+        .list-chapter {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 2px;
+            border: 2px black solid;
+            border-radius: 10px;
+            max-height: 50rem;
+            height: 100%;
+            overflow:auto;
+        }
+
+
+        .list-chapter a {
+            display: inline-block;
+            padding: 10px;
+            text-transform: capitalize;
+            text-decoration: none;
+            color: black;
+        }
+
+        .list-chapter a:hover {
+            background-color: rgb(194, 194, 194);
+        }
+
+        a i {
+            margin-right: 5px;
+        }
+
+        .manga-description {
+            background-color: rgb(206, 206, 206);
+            width: 100%;
+            padding: 20px 25px;
+            border-radius: 10px;
+            border: none;
+        }
+
+
+        .thumnail {
+            border: 3px rgb(156, 156, 156) solid;
+            border-radius: 10px;
+        }
+
+        .manga-container {
+            max-width: 40rem;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .manga-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 50px;
+        }
+
+        .manga-card img {
+            width: 100%;
+            border: 3px rgb(99, 99, 99) solid;
+            border-radius: 10px;
+        }
+
+        
+        .footer-container {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            color: white;
+            background-color: black;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            bottom: 0;
+        }
+
+        .footer-container .me-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            line-height: 2rem;
+            align-items: center;
+        }
+
+        .footer-container .me-info a {
+            text-decoration: underline;
+            color: white;
+            font-weight: 500;
+        }
+
+        .footer-container .text {
+            flex: 1;
+            line-height: 1.5rem;
+            font-size: 0.9rem;
+            max-width: 50rem;
+        }
+
+        .hot-manga-title{
+            font-size: 20px;
+            font-weight: 400;
+            margin-top: 10px;
+            
+        }
+
+        .swiper {
+            background-color: #F8F9FA;
+            padding: 20px;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+
+        }
+
+        .dropdown-category.show {
+    display: grid;
+    grid-template-columns: repeat(3, 8rem);
+  }
+
+  .dropdown-li-item {
+    padding: 10px;
+  }
+
+        .newupload-manga-title{
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: 400;
+
+        }
+
+        .navbar {
+            max-width: 70rem;
+            width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        #myBtn {
+            position: fixed; /* Fixed/sticky position */
+            bottom: 30px; /* Place the button at the bottom of the page */
+            right: 30px; /* Place the button 30px from the right */
+            z-index: 99; /* Make sure it does not overlap */
+            border: none; /* Remove borders */
+            outline: none; /* Remove outline */
+            background-color: rgb(38, 0, 255); /* Set a background color */
+            color: white; /* Text color */
+            cursor: pointer; /* Add a mouse pointer on hover */
+            padding: 10px 15px; /* Some padding */
+            border-radius: 10px; /* Rounded corners */
+            font-size: 22px; /* Increase font size */
+        }
+
+        #myBtn:hover {
+  background-color: #555; /* Add a dark-grey background on hover */
+}
+
+        
+    </style>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+
+<body id = "myinput" data-bs-spy="scroll" data-bs-target="#navbar-example2" >
+
+    <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fas fa-chevron-up"></i></button>
+
+    {% include 'nav.html' %}
+
+    {% block content %}
+
+
+    {% endblock %}
+
+    {% include 'footer.html' %}
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+          slidesPerView: 2,
+          spaceBetween: 30,
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+
+          
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+        },
+        mousewheel: true,
+        keyboard: true,
+        loop: true,
+        autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+        },    
+    });
+
+      </script>
+      <script>
+        // Get the button:
+let mybutton = document.getElementById("myBtn");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0; // For Safari
+  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+      </script>
+
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block content %} 
+
+<style>
+    .read-button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .read-button {
+        padding: 10px;
+        background-color: rgb(170, 14, 14);
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 10px;
+        border: none;
+
+    }
+
+    .tags-container {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .tags-container a {
+        padding: 5px 10px;
+        background-color: #CECECE;
+        border-radius: 10px;
+        transition: all 150ms ease-in-out;
+
+    }
+
+    .tags-container a:hover {
+        background-color: rgb(154, 245, 245);
+    }
+
+    .continue_read {
+        background-color: rgb(40, 69, 201);
+        color: white;
+    }
+
+    .continue_read i{
+        margin: 0 3px;
+        
+    }
+
+    .follow-button {
+        background-color: #2AAC2A;
+    }
+
+
+    .message-of-room {
+        width: 100%
+    }
+</style>
+<div class = "container">
+        <img src="{{manga.image}}" alt="" class = "thumnail">
+        <h3>{{manga.name}}</h3>
+
+        <div class="tags-container">
+            {% for tag in tags_manga %}
+                <a href="{% url 'list' tag.id %}">{{tag.name}}</a>
+            {% endfor %}
+        </div>
+        
+        <p class = "manga-description">{{manga.description}}</p>
+        <div class="read-button-container">
+            <a href="{% url 'manga-content' manga.name last_chapter.id %}" class ="read-button">
+                Đọc từ đầu
+            </a>
+            <a href="{% url 'manga-content' manga.name new_chapter.id %}" class = "read-button">
+                Đọc mới nhất
+            </a>
+            {% if continue_read != None %}
+            <a href="{% url 'manga-content' manga.name continue_read.id %}" class = "read-button continue_read">
+                Đọc tiếp <i class="fas fa-angle-right"></i>
+            </a>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            <form action="" method = 'POST'>
+                {% csrf_token %}
+                <input type="hidden" name = 'value' value="follow-button">
+                {% if following %}
+                <button class="read-button unfollow-button" name = 'follow' value = 'unfollow' type = "submit">
+                    <i class="fas fa-times"></i>
+                </button>
+                {% else %}
+                <button class="read-button follow-button" name = 'follow' value = 'follow' type="submit">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+                {% endif %}
+            </form>
+            {% endif %}
+        </div>
+        <div>
+            <p style = "display: inline-block; font-weight: 500; font-size: 17px;">Tổng số lượt xem: </p>
+            {{manga.all_views}} <i class="fas fa-eye"></i>
+        </div>
+        <div class = "list-chapter">
+            {% for chapter in chapters %}
+                <a href="{% url 'manga-content' manga.name chapter.id %}" style ="display: flex; justify-content: space-between;">
+                    <span>
+                        <i class = "far fa-file-alt"></i>
+                        {{chapter.chaptername}}
+                    </span>
+                    <span>
+                        {{chapter.views}}
+                        <i class="fas fa-glasses" style="margin-left: 3px; font-size: 15px; padding: 4px 7px; background-color: rgba(187, 187, 187, 0.479); border-radius: 5px;"></i>
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+        {% if request.user.is_authenticated %}
+        <div style="width: 100%; display: flex; gap: 10px; align-items: center;">
+            <img src="{{user.profile.image.url}}" alt="{{request.user.profile.image}}" style = "width: 50px; height: 50px; object-fit: cover; z-index: 99; border: 2px rgb(58, 58, 58) solid; border-radius: 2px;">
+            <i class="fas fa-caret-right" style="transform: translateX(-11px);"></i>
+            <form action="" class="message-of-room" method = "POST" class = "form-message" style = "display: flex; gap :10px;">
+                {% csrf_token %}
+                <input type="hidden" name = 'follow' value = "message">
+                <input type="text" style="width: 100%; height: 3rem; border-radius: 3px; border: 1px black solid; padding: 5px 10px;" name = "message">
+                <button type = 'submit' style = "padding:5px 15px; border: 1px rgb(197, 194, 0) solid; background-color: rgb(253, 253, 0); border-radius: 10px; color: black">Đăng</button>
+            </form>            
+        </div>
+        {% endif %}
+        <p style = "padding: 10px 20px; border-bottom: 4px rgb(70, 0, 184) solid; display: inline-block;  width: 100% ; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; box-shadow: 0 10px 10px rgba(131, 131, 131, 0.2);">Bình luận <i class="fas fa-comments"></i></p>
+        <div style="width: 100%; gap: 20px; display: grid;">
+            {% for message in messages %}
+            <div style="width: 100%; display: flex; gap: 10px; align-items: center; position: relative;">
+                <i class="fas fa-caret-right" style="transform: translateX(66px);"></i>
+                <img src="{{message.user.profile.image.url}}" alt="{{user.profile.image}}" style = "width: 50px; height: 50px; object-fit: cover; z-index: 99; border: 2px rgb(58, 58, 58) solid; border-radius: 2px;">
+                <div>{{message.body}}</div>
+                {% if message_user %}
+                <form method = "POST" action="" style="position: absolute; right: 10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name = "follow" value= "delete-message"> 
+                    <input type="hidden" name = 'message-id' value = "{{message.id}}">
+                    <button type = "submit" 
+                    style="border: none;
+                    background-color: red;
+                    color: white;
+                    border-radius: 50%;
+                        ">
+                        <i class="fas fa-times"></i></button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
